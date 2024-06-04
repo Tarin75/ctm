@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aide CTM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        function updateMenus() {
+            const tranchee = document.getElementById("tranchee").value;
+            const entrepreneurs = document.getElementById("entrepreneurs");
+            const risques = document.getElementById("risques");
+            const risquesAggraves = document.getElementById("risquesAggraves");
+            const result = document.getElementById("result");
+
+            if (tranchee === "non") {
+                entrepreneurs.classList.add("hidden");
+                risques.classList.add("hidden");
+                risquesAggraves.classList.add("hidden");
+                result.textContent = "Hors CTM";
+            } else {
+                entrepreneurs.classList.remove("hidden");
+                if (entrepreneurs.value === "un") {
+                    result.textContent = "Hors CTM";
+                    risques.classList.add("hidden");
+                    risquesAggraves.classList.add("hidden");
+                } else if (entrepreneurs.value === "plusieurs") {
+                    risques.classList.remove("hidden");
+                    risquesAggraves.classList.remove("hidden");
+                    updateResult();
+                }
+            }
+        }
+
+        function updateResult() {
+            const risquesAggraves = document.getElementById("risquesAggraves").value;
+            const risques = document.getElementById("risques").value;
+            const result = document.getElementById("result");
+
+            if (risquesAggraves !== "none") {
+                result.textContent = "ctm b";
+            } else if (risques !== "none") {
+                result.textContent = "ctm a";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Aide CTM</h1>
+    <label for="tranchee">Tranchée à réaliser :</label>
+    <select id="tranchee" onchange="updateMenus()">
+        <option value="non">Non</option>
+        <option value="oui">Oui</option>
+    </select>
+
+    <div id="entrepreneurs" class="hidden">
+        <label for="entrepreneursSelect">Entrepreneurs:</label>
+        <select id="entrepreneursSelect" onchange="updateMenus()">
+            <option value="un">Un entrepreneur</option>
+            <option value="plusieurs">Plusieurs entrepreneurs</option>
+        </select>
+    </div>
+
+    <div id="risques" class="hidden">
+        <label for="risquesSelect">Risques:</label>
+        <select id="risquesSelect" onchange="updateResult()">
+            <option value="none">Sélectionner</option>
+            <option value="pietons">Piétons, cyclistes</option>
+            <option value="Proxgazores">Proximité gaz ORES</option>
+            <option value="proxpoteaux">Proximité poteaux</option>
+            <option value="Proxcableshtores">Proximité de gaz HT ORES</option>
+            <option value="ProxlignesHTBTnues">Proximité de lignes HT/BT nues</HTml></option>
+            <option value="Travauxpostesht">Travaux dans postes HT</option>
+            <option value="circulationintense">Circulation intense</option>
+            <option value="visibilité">Manque de visibilité</option>
+            <option value="voieferree">Proximité de voie ferrée, tramway</option>
+            <option value="carburant">Station de carburant</option>
+            <option value="antennegsm">Proximité d'antenne GSM</option>
+            <option value="espacemalventile">Espace mal ventilé</option>
+            <option value="maleclaire">Espace mal éclairé</option>
+            <option value="animaux">Présence de bétail, animaux dangereux</option>
+            <option value="terrain">Terrain instable, boueux</option>
+            <option value="pente">Terrain dénivelé, forte pente</option>
+            <option value="murs">Tranchée le long de murs en mauvais état</option>
+            <option value="soutenement">Tranchée le long de murs de soutènement</option>
+            <option value="bordure">Proximité de bordures de route</option>
+            <option value="Travaux">Autres travaux en cours</option>
+
+        </select>
+    </div>
+
+    <div id="risquesAggraves" class="hidden">
+        <label for="risquesAggravesSelect">Risques aggravés:</label>
+        <select id="risquesAggravesSelect" onchange="updateResult()">
+            <option value="none">Sélectionner</option>
+            <option value="tranchee1.20m">Tranchée 1.20m</option>
+            <option value="travauxEnHauteur">Travaux en hauteur</option>
+            <option value="elia">Proximité ELIA</option>
+            <option value="fluxys">Proximité Fluxys</option>
+            <option value="airliquide">Proximité Air Liquide</option>
+            <option value="otan">Proximité de conduites OTAN</option>
+            <option value="radio">Radio, soudures Ac</option>
+            <option value="asbeste">Présence d'asbeste</option>
+            <option value="pcb">Présence de PCB</option>
+            <option value="eau">Proximité d'un cours d'eau</option>
+            <option value="forage">Forage</option>
+            <option value="lourd">Manutention d'élements préfabriqués lourds</option>
+            
+        </select>
+    </div>
+
+    <div>
+        <h2>Résultat</h2>
+        <p id="result"></p>
+    </div>
+</body>
+</html>
