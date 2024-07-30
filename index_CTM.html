@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aide CTM</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #007BFF;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .form-group.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .column {
+            width: 48%;
+        }
+        .group {
+            margin-bottom: 20px;
+        }
+        .fixed-bottom-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .fixed-bottom-buttons button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .fixed-bottom-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .flex-row {
+            display: flex;
+            align-items: center;
+        }
+        .flex-row > div {
+            margin-right: 40px;
+        }
+        .disabled {
+            color: #ccc;
+        }
+        .enabled {
+            color: #000;
+        }
+        .green {
+            color: green;
+            font-weight: bold;
+        }
+        .checked-energy {
+            color: green;
+            font-weight: bold;
+        }
+        .checked-risk {
+            color: black;
+            font-weight: bold;
+        }
+        .checked-risk-aggrave {
+            color: red;
+            font-weight: bold;
+        }
+        /* Popup styles */
+        .popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: rgba(255, 166, 0, 0.418);
+            border: 1px solid #ccc;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            cursor: move;
+        }
+        .popup p span#ctm-result {
+            font-weight: bold;
+        }
+        .popup p {
+            margin: 0;
+        }
+        .popup button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .popup button:hover {
+            background-color: #0056b3;
+        }
+        #documents-ctm-button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-group conditions-ctm">
+        <h2>Type de pose</h2>
+        <div class="flex-row">
+            <div>
+                <label for="tranchee_realiser">Tranchée à réaliser :</label>
+                <select id="tranchee_realiser" onchange="updateMenus()">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+            <div style="margin-left: 40px;">
+                <label for="pose_preassemble">Pose de préassemblé :</label>
+                <select id="pose_preassemble" onchange="updateMenus()">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+            <div style="margin-left: 40px;">
+                <label for="plantation_poteau">Plantation de poteau :</label>
+                <select id="plantation_poteau" onchange="updateMenus()">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex-row" style="margin-top: 20px;">
+            <div>
+                <label for="remontee_cable">Remontée de câble :</label>
+                <select id="remontee_cable">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+            <div style="margin-left: 40px;">
+                <label for="entrepreneur_hors_contrat">Entrepreneur hors contrat :</label>
+                <select id="entrepreneur_hors_contrat">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+            <div style="margin-left: 40px;">
+                <label for="cabine_placer">Cabine à placer :</label>
+                <select id="cabine_placer">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nouvelle section Type de tranchée -->
+    <div class="form-group" id="tranchee_section">
+        <h2>Type de tranchée</h2>
+        <div class="flex-row">
+            <div>
+                <label for="largeur_tranchee">Largeur de tranchée >31cm :</label>
+                <select id="largeur_tranchee" onchange="updateLongueurPoseMenu()">
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                </select>
+            </div>
+            <div style="margin-left: 40px;">
+                <label for="longueur_pose">Longueur de pose :</label>
+                <select id="longueur_pose" onchange="updateResult()">
+                    <option value="selectionner">Sélectionnez la longueur</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group columns">
+        <div id="risques" class="column">
+            <h3>Risques:</h3>
+            <label for="risque_proximite_gaz_ores"><input type="checkbox" id="risque_proximite_gaz_ores" onchange="updateRiskCheckbox('risque_proximite_gaz_ores')"> Proximité gaz ORES</label><br>
+            <label for="risque_proximite_cables_ht_ores"><input type="checkbox" id="risque_proximite_cables_ht_ores" onchange="updateRiskCheckbox('risque_proximite_cables_ht_ores')"> Proximité de câbles HT ORES</label><br>
+            <label for="risque_proximite_lignes_ht_bt_nues"><input type="checkbox" id="risque_proximite_lignes_ht_bt_nues" onchange="updateRiskCheckbox('risque_proximite_lignes_ht_bt_nues')"> Proximité lignes HT/ BT nues</label><br>
+            <label for="risque_travaux_postes_ht_mt"><input type="checkbox" id="risque_travaux_postes_ht_mt" onchange="updateRiskCheckbox('risque_travaux_postes_ht_mt')"> Travaux dans postes HT / MT</label><br>
+            <label for="risque_circulation"><input type="checkbox" id="risque_circulation" onchange="updateRiskCheckbox('risque_circulation')"> Circulation</label><br>
+            <label for="risque_manque_visibilite"><input type="checkbox" id="risque_manque_visibilite" onchange="updateRiskCheckbox('risque_manque_visibilite')"> Manque de visibilité</label><br>
+            <label for="risque_passage_etroite"><input type="checkbox" id="risque_passage_etroite" onchange="updateRiskCheckbox('risque_passage_etroite')"> Passage étroit, difficile</label><br>
+            <label for="risque_proximite_voie_ferree"><input type="checkbox" id="risque_proximite_voie_ferree" onchange="updateRiskCheckbox('risque_proximite_voie_ferree')"> Proximité de voie ferrée, tramway</label><br>
+            <label for="risque_pietons_cyclistes"><input type="checkbox" id="risque_pietons_cyclistes" onchange="updateRiskCheckbox('risque_pietons_cyclistes')"> Piétons, Cyclistes</label><br>
+            <label for="risque_proximite_station_carburants"><input type="checkbox" id="risque_proximite_station_carburants" onchange="updateRiskCheckbox('risque_proximite_station_carburants')"> Proximité Station de carburants</label><br>
+            <label for="risque_proximite_antenne_gsm"><input type="checkbox" id="risque_proximite_antenne_gsm" onchange="updateRiskCheckbox('risque_proximite_antenne_gsm')"> Proximité d'une antenne GSM</label><br>
+            <label for="risque_espace_mal_ventile"><input type="checkbox" id="risque_espace_mal_ventile" onchange="updateRiskCheckbox('risque_espace_mal_ventile')"> Espace mal ventilé</label><br>
+            <label for="risque_endroit_mal_eclaire"><input type="checkbox" id="risque_endroit_mal_eclaire" onchange="updateRiskCheckbox('risque_endroit_mal_eclaire')"> Endroit mal éclairé</label><br>
+            <label for="risque_presence_betail"><input type="checkbox" id="risque_presence_betail" onchange="updateRiskCheckbox('risque_presence_betail')"> Présence de bétail, animaux dangereux</label><br>
+            <label for="risque_terrain_instable_boueux"><input type="checkbox" id="risque_terrain_instable_boueux" onchange="updateRiskCheckbox('risque_terrain_instable_boueux')"> Terrain instable, boueux</label><br>
+            <label for="risque_terrain_dénivelé_pente"><input type="checkbox" id="risque_terrain_dénivelé_pente" onchange="updateRiskCheckbox('risque_terrain_dénivelé_pente')"> Terrain dénivelé, forte pente</label><br>
+            <label for="risque_proximite_murs_mauvais_etat"><input type="checkbox" id="risque_proximite_murs_mauvais_etat" onchange="updateRiskCheckbox('risque_proximite_murs_mauvais_etat')"> Proximité de murs en mauvais état</label><br>
+            <label for="risque_proximite_murs_soutènement"><input type="checkbox" id="risque_proximite_murs_soutènement" onchange="updateRiskCheckbox('risque_proximite_murs_soutènement')"> Proximité de murs de soutènement</label><br>
+            <label for="risque_proximite_poteaux"><input type="checkbox" id="risque_proximite_poteaux" onchange="updateRiskCheckbox('risque_proximite_poteaux')"> Proximité poteaux</label><br>
+            <label for="risque_proximite_bordures_route"><input type="checkbox" id="risque_proximite_bordures_route" onchange="updateRiskCheckbox('risque_proximite_bordures_route')"> Proximité de bordures de route</label><br>
+            <label for="risque_autres_travaux_en_cours"><input type="checkbox" id="risque_autres_travaux_en_cours" onchange="updateRiskCheckbox('risque_autres_travaux_en_cours')"> Autres travaux en cours</label><br>
+        </div>
+
+        <div id="risques_aggraves" class="column">
+            <h3>Risques aggravés:</h3>
+            <label for="risque_fluxys"><input type="checkbox" id="risque_fluxys" onchange="updateRiskAggraveCheckbox('risque_fluxys')"> Fluxys</label><br>
+            <label for="risque_elia"><input type="checkbox" id="risque_elia" onchange="updateRiskAggraveCheckbox('risque_elia')"> Elia</label><br>
+            <label for="risque_air_liquide"><input type="checkbox" id="risque_air_liquide" onchange="updateRiskAggraveCheckbox('risque_air_liquide')"> Air Liquide</label><br>
+            <label for="risque_1000"><input type="checkbox" id="risque_1000" onchange="updateRiskAggraveCheckbox('risque_1000')"> Câble > 1000V autre GRD</label><br>
+            <label for="risque_otan"><input type="checkbox" id="risque_otan" onchange="updateRiskAggraveCheckbox('risque_otan')"> OTAN</label><br>
+            <label for="risque_radio_soudures_ac"><input type="checkbox" id="risque_radio_soudures_ac" onchange="updateRiskAggraveCheckbox('risque_radio_soudures_ac')"> Radio, soudures Ac</label><br>
+            <label for="risque_asbeste"><input type="checkbox" id="risque_asbeste" onchange="updateRiskAggraveCheckbox('risque_asbeste')"> Asbeste</label><br>
+            <label for="risque_proximite_cours_eau"><input type="checkbox" id="risque_proximite_cours_eau" onchange="updateRiskAggraveCheckbox('risque_proximite_cours_eau')"> Proximité d'un cours d'eau</label><br>
+            <label for="risque_forage"><input type="checkbox" id="risque_forage" onchange="updateRiskAggraveCheckbox('risque_forage')"> Forage</label><br>
+            <label for="risque_manutention_prefab_lourd"><input type="checkbox" id="risque_manutention_prefab_lourd" onchange="updateRiskAggraveCheckbox('risque_manutention_prefab_lourd')"> Manutention d'éléments préfab lourd</label><br>
+            <label for="risque_tranchee_1_20m"><input type="checkbox" id="risque_tranchee_1_20m" onchange="updateRiskAggraveCheckbox('risque_tranchee_1_20m')"> Tranchée 1.20m</label><br>
+            <label for="risque_travaux_hauteur"><input type="checkbox" id="risque_travaux_hauteur" onchange="updateRiskAggraveCheckbox('risque_travaux_hauteur')"> Travaux en hauteur</label><br>
+        </div>
+    </div>
+
+    <!-- Popup HTML -->
+    <div class="popup" id="popup">
+        <p id="popup-text">Résultat CTM : <span id="ctm-result"></span></p>
+        <p>Type de tranchée : <span id="tranchee-result"></span></p>
+        <button onclick="resetPage()">Réinitialiser</button>
+        <button id="documents-ctm-button" disabled>Documents CTM</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            enableAllSections();
+            updateMenus(); // Mise à jour initiale
+            updateResult();
+        });
+
+        function updateMenus() {
+            const tranchee = document.getElementById("tranchee_realiser").value;
+            const preassemble = document.getElementById("pose_preassemble").value;
+            const plantation = document.getElementById("plantation_poteau").value;
+            const travauxHauteur = document.getElementById("risque_travaux_hauteur");
+            const prefabLourd = document.getElementById("risque_manutention_prefab_lourd");
+
+            travauxHauteur.checked = preassemble === "oui";
+            prefabLourd.checked = plantation === "oui";
+
+            if (prefabLourd.checked) {
+                const label = document.querySelector(`label[for='risque_manutention_prefab_lourd']`);
+                label.classList.add("checked-risk-aggrave");
+            } else {
+                const label = document.querySelector(`label[for='risque_manutention_prefab_lourd']`);
+                label.classList.remove("checked-risk-aggrave");
+            }
+
+            updateRiskAggraveCheckbox('risque_travaux_hauteur');
+            updateRiskAggraveCheckbox('risque_manutention_prefab_lourd');
+
+            // Activer/désactiver la section Type de tranchée
+            const trancheeSection = document.getElementById('tranchee_section');
+            if (tranchee === "oui") {
+                trancheeSection.classList.remove('disabled');
+                trancheeSection.querySelectorAll('select').forEach(select => select.disabled = false);
+            } else {
+                trancheeSection.classList.add('disabled');
+                trancheeSection.querySelectorAll('select').forEach(select => select.disabled = true);
+            }
+
+            updateLongueurPoseMenu(); // Mise à jour des options du menu déroulant en fonction de la tranchée
+            updateResult();
+        }
+
+        function enableAllSections() {
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                group.classList.remove('inactive');
+            });
+            enableCheckboxes();
+        }
+
+        function enableCheckboxes() {
+            const risquesCheckboxes = document.querySelectorAll("#risques input[type=checkbox]");
+            const risquesAggravesCheckboxes = document.querySelectorAll("#risques_aggraves input[type=checkbox]");
+            const risquesLabels = document.querySelectorAll("#risques label");
+            const risquesAggravesLabels = document.querySelectorAll("#risques_aggraves label");
+
+            risquesCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+
+            risquesAggravesCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+
+            risquesLabels.forEach(label => {
+                label.classList.add("enabled");
+                label.classList.remove("disabled");
+            });
+
+            risquesAggravesLabels.forEach(label => {
+                label.classList.add("enabled");
+                label.classList.remove("disabled");
+            });
+        }
+
+        function updateLongueurPoseMenu() {
+            const largeurTranchee = document.getElementById("largeur_tranchee").value;
+            const longueurPose = document.getElementById("longueur_pose");
+
+            longueurPose.innerHTML = "";
+
+            if (largeurTranchee === "oui") {
+                longueurPose.innerHTML = `
+                    <option value="selectionner">Sélectionnez la longueur</option>
+                    <option value="1000">inf 1000 mct</option>
+                    <option value="1000sup">sup 1000 mct</option>
+                `;
+            } else {
+                longueurPose.innerHTML = `
+                    <option value="selectionner">Sélectionnez la longueur</option>
+                    <option value="2000inf">inf 2000 mct</option>
+                    <option value="2000sup">sup 2000 mct</option>
+                `;
+            }
+
+            updateResult();
+        }
+
+        function updateResult() {
+            const tranchee = document.getElementById("tranchee_realiser").value;
+            const preassemble = document.getElementById("pose_preassemble").value;
+            const plantation = document.getElementById("plantation_poteau").value;
+            const travauxHauteur = document.getElementById("risque_travaux_hauteur").checked;
+            const remonteeCable = document.getElementById("remontee_cable").value;
+            const entrepreneurHorsContrat = document.getElementById("entrepreneur_hors_contrat").value;
+            const cabinePlacer = document.getElementById("cabine_placer").value;
+            const longueurPose = document.getElementById("longueur_pose").value;
+            const largeurTranchee = document.getElementById("largeur_tranchee").value;
+
+            const risquesAggravesCheckboxes = document.querySelectorAll("#risques_aggraves input[type=checkbox]");
+
+            let hasRisquesAggraves = false;
+
+            risquesAggravesCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    hasRisquesAggraves = true;
+                }
+            });
+
+            let ctmResult = "Hors CTM";
+
+            if (tranchee === "oui") {
+                ctmResult = "CTM A";
+                if (hasRisquesAggraves) {
+                    ctmResult = "CTM B";
+                }
+            }
+
+            if (longueurPose === "1000") {
+                ctmResult = hasRisquesAggraves ? "CTM B" : "CTM A";
+            } else if (longueurPose === "1000sup") {
+                ctmResult = hasRisquesAggraves ? "CTM C" : "CTM B";
+            } else if (longueurPose === "2000inf") {
+                ctmResult = hasRisquesAggraves ? "CTM B" : "CTM A";
+            } else if (longueurPose === "2000sup") {
+                ctmResult = hasRisquesAggraves ? "CTM C" : "CTM B";
+            }
+
+            const ctmResultElement = document.getElementById("ctm-result");
+            ctmResultElement.textContent = ctmResult;
+
+            // Update CTM result styles
+            ctmResultElement.style.color = '';
+            ctmResultElement.style.fontWeight = 'bold';
+            if (ctmResult === 'CTM A') {
+                ctmResultElement.style.color = 'black';
+            } else if (ctmResult === 'CTM B') {
+                ctmResultElement.style.color = 'red';
+            } else if (ctmResult === 'CTM C') {
+                ctmResultElement.style.color = 'purple';
+            } else if (ctmResult === 'Hors CTM') {
+                ctmResultElement.style.color = 'black';
+                ctmResultElement.style.fontWeight = 'normal';
+            }
+
+            // Determine PS or PM result
+            let psResult = "PS";
+
+            if (largeurTranchee === "oui") {
+                psResult = "PM";
+            }
+
+            document.getElementById("tranchee-result").textContent = psResult;
+
+            // Update Documents CTM button state
+            const documentsCtmButton = document.getElementById("documents-ctm-button");
+            if (ctmResult === "Hors CTM") {
+                documentsCtmButton.disabled = true;
+            } else {
+                documentsCtmButton.disabled = false;
+            }
+        }
+
+        function resetPage() {
+            location.reload();
+        }
+
+        function updateRiskCheckbox(id) {
+            const checkbox = document.getElementById(id);
+            const label = checkbox.closest('label');
+
+            if (checkbox.checked) {
+                label.classList.add("checked-risk");
+            } else {
+                label.classList.remove("checked-risk");
+            }
+
+            updateResult();
+        }
+
+        function updateRiskAggraveCheckbox(id) {
+            const checkbox = document.getElementById(id);
+            const label = checkbox.closest('label');
+
+            if (checkbox.checked) {
+                label.classList.add("checked-risk-aggrave");
+            } else {
+                label.classList.remove("checked-risk-aggrave");
+
+                if (id === 'risque_travaux_hauteur' && !checkbox.checked) {
+                    document.getElementById('pose_preassemble').value = 'non';
+                }
+                if (id === 'risque_manutention_prefab_lourd' && !checkbox.checked) {
+                    document.getElementById('plantation_poteau').value = 'non';
+                }
+            }
+
+            updateResult();
+        }
+
+        // Dragging functionality
+        const popup = document.getElementById('popup');
+
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        popup.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - popup.getBoundingClientRect().left;
+            offsetY = e.clientY - popup.getBoundingClientRect().top;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        function onMouseMove(e) {
+            if (!isDragging) return;
+            popup.style.left = `${e.clientX - offsetX}px`;
+            popup.style.top = `${e.clientY - offsetY}px`;
+            popup.style.bottom = 'auto';
+            popup.style.right = 'auto';
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+    </script>
+</body>
+</html>
